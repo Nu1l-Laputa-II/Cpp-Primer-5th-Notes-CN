@@ -408,9 +408,9 @@ int &r2 = ci;   // error: non const reference to a const object
   ```c++
   int i = 42;
   const int &r1 = i;      // we can bind a const int& to a plain int object
-  const int &r2 = 42;     // ok: r1 is a reference to const
+  const int &r2 = 42;     // ok: r2 is a reference to const
   const int &r3 = r1 * 2;     // ok: r3 is a reference to const
-  int &r4 = r * 2;        // error: r4 is a plain, non const reference
+  int &r4 = r1 * 2;        // error: r4 is a plain, non const reference
   ```
 
 - 允许为一个常量引用绑定非常量的对象、字面值或者一般表达式。
@@ -457,6 +457,15 @@ const int *const p3 = p2; // right-most const is top-level, left-most is not
 const int &r = ci;      // const in reference types is always low-level
 ```
 
+#### 区别对比
+| **区别**     | **顶层 `const`**                           | **底层 `const`**                         |
+| ------------ | ------------------------------------------ | ---------------------------------------- |
+| **修饰对象** | 修饰对象本身或指针本身                     | 修饰指针指向的值                         |
+| **含义**     | 表示变量或指针自身不可变                   | 表示指针所指向的值不可通过该指针修改     |
+| **赋值规则** | 允许非 `const` 对象赋值给顶层 `const` 变量 | 不允许非 `const` 指针指向底层 `const` 值 |
+| **示例**     | `int *const ptr`，表示 ptr 不可变          | `const int *ptr`，表示 *ptr 不可变       |
+
+#### 拷贝操作
 当执行拷贝操作时，常量是顶层`const`还是底层`const`区别明显：
 
 - 顶层`const`没有影响。拷贝操作不会改变被拷贝对象的值，因此拷入和拷出的对象是否是常量无关紧要。
